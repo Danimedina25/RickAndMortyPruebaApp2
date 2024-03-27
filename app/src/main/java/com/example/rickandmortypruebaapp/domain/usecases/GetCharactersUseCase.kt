@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class GetCharactersUseCase @Inject constructor(private val repository: RickAndMortyRepository) {
 
-    operator fun invoke(): Flow<NetworkResult<List<CharacterModel>>> {
+    suspend operator fun invoke(): Flow<NetworkResult<List<CharacterModel>>> {
         return repository.getCharacters()
     }
 }

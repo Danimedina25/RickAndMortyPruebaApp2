@@ -12,14 +12,12 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class RickAndMortyRepositoryImpl  @Inject constructor(
-    private val rickAndMortyApi: RickAndMortyApi,
+    private val rickAndMortyApi: RickAndMortyApi
 ): RickAndMortyRepository {
 
-    override fun getCharacters(): Flow<NetworkResult<List<CharacterModel>>> =
-        flow {
+    override suspend fun getCharacters(): Flow<NetworkResult<List<CharacterModel>>> = flow {
             try {
                 val result = rickAndMortyApi.getCharacters(1).toListCharacters()
-                Log.d("result1", Gson().toJson(result))
                 emit(NetworkResult.Success(
                     data = result
                 ))

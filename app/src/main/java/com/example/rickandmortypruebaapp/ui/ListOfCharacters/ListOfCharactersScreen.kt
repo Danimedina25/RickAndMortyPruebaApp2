@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,7 +36,7 @@ import com.example.rickandmortypruebaapp.ui.theme.RickAndMortyPruebaAppTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListOfCharactersScreen(viewModel: ListOfCharactersViewModel = hiltViewModel()){
-    //val characters: List<CharacterModel> by viewModel.getCharactersResult
+    val characters = viewModel.getCharactersResult.collectAsState()
     RickAndMortyPruebaAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(
@@ -53,8 +54,8 @@ fun ListOfCharactersScreen(viewModel: ListOfCharactersViewModel = hiltViewModel(
             ) { innerPadding ->
                 HomeContent(
                     modifier = Modifier.padding(innerPadding),
-                    isLoading = viewModel.isLoading.value!!,
-                    characters = emptyList()
+                    isLoading = false,
+                    characters = characters.value
                 )
             }
         }

@@ -19,6 +19,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -40,12 +42,12 @@ class ListOfCharactersViewModel @Inject constructor(
         getCharacters()
     }
 
-    fun getCharacters() {
-        getCharactersUseCase()
+    private fun getCharacters() {
         viewModelScope.launch {
-            val result = getCharactersUseCase()
-            _getCharactersResult.emit(result)
-            Log.d("result", Gson().toJson(getCharactersResult.value))
+            getCharactersUseCase().onEach {
+                _getCharactersResult.emit(it.data!!)
+            }.launchIn(this)
+
         }
     }
 

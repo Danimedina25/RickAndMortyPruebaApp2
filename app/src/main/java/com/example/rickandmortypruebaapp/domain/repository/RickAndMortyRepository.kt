@@ -6,6 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 
 interface RickAndMortyRepository {
-    fun getCharacters(): Flow<NetworkResult<List<CharacterModel>>>
+    suspend fun getCharacters(): Flow<NetworkResult<List<CharacterModel>>>
 }
 
