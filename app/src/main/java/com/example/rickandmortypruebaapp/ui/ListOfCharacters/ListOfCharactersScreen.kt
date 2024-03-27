@@ -37,6 +37,7 @@ import com.example.rickandmortypruebaapp.ui.theme.RickAndMortyPruebaAppTheme
 @Composable
 fun ListOfCharactersScreen(viewModel: ListOfCharactersViewModel = hiltViewModel()){
     val characters = viewModel.getCharactersResult.collectAsState()
+    val loading = viewModel.isLoading.collectAsState()
     RickAndMortyPruebaAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(
@@ -45,16 +46,12 @@ fun ListOfCharactersScreen(viewModel: ListOfCharactersViewModel = hiltViewModel(
         ) {
             Scaffold(
                 topBar = {
-                    HomeTopBar()
+                    CharactersTopBar()
                 },
-                bottomBar = {
-                    HomeBottomBar(
-                    )
-                }
             ) { innerPadding ->
-                HomeContent(
+                CharactersContent(
                     modifier = Modifier.padding(innerPadding),
-                    isLoading = false,
+                    isLoading = loading.value,
                     characters = characters.value
                 )
             }
@@ -64,7 +61,7 @@ fun ListOfCharactersScreen(viewModel: ListOfCharactersViewModel = hiltViewModel(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HomeTopBar(
+private fun CharactersTopBar(
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
@@ -82,9 +79,9 @@ private fun HomeTopBar(
 }
 
 @Composable
-private fun HomeContent(
+private fun CharactersContent(
     modifier: Modifier = Modifier,
-    isLoading: Boolean = false,
+    isLoading: Boolean,
     characters: List<CharacterModel> = emptyList()
 ) {
 
@@ -92,51 +89,35 @@ private fun HomeContent(
         modifier = modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.primary
     ) {
-        LazyColumn(
-            contentPadding = PaddingValues(vertical = 6.dp),
-            modifier = Modifier.fillMaxWidth(),
-            content = {
-                items(characters.size) { index ->
-                    CharacterItem(
-                        modifier = Modifier.fillMaxWidth(),
-                        item = characters[index],
-                    )
+
+        if (isLoading)
+            Loading()
+        else
+            LazyColumn(
+                contentPadding = PaddingValues(vertical = 6.dp),
+                modifier = Modifier.fillMaxWidth(),
+                content = {
+                    items(characters.size) { index ->
+                        CharacterItem(
+                            modifier = Modifier.fillMaxWidth(),
+                            item = characters[index],
+                        )
+                    }
                 }
-            }
-        )
-        if (isLoading) FullScreenLoading()
-    }
-}
-
-@Composable
-private fun HomeBottomBar(
-
-) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.Transparent)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 2.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-
-        }
+            )
     }
 }
 
 
+
 @Composable
-private fun FullScreenLoading() {
+private fun Loading() {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .wrapContentSize(Alignment.Center)
     ) {
-        CircularProgressIndicator()
+        CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary)
     }
 }
 

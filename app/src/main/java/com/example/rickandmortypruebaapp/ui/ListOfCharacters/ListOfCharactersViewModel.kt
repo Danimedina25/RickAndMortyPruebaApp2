@@ -37,6 +37,10 @@ class ListOfCharactersViewModel @Inject constructor(
     val getCharactersResult: StateFlow<List<CharacterModel>>
         get() = _getCharactersResult
 
+    private val _isLoading = MutableStateFlow<Boolean>(false)
+    val isLoading: StateFlow<Boolean>
+        get() = _isLoading
+
 
     init {
         getCharacters()
@@ -44,10 +48,11 @@ class ListOfCharactersViewModel @Inject constructor(
 
     private fun getCharacters() {
         viewModelScope.launch {
+            _isLoading.emit(true)
             getCharactersUseCase().onEach {
+                if(it.data!!.isNotEmpty()) _isLoading.emit(false)
                 _getCharactersResult.emit(it.data!!)
             }.launchIn(this)
-
         }
     }
 
